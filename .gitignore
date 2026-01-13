@@ -1,0 +1,41 @@
+# dbt
+target/
+dbt_packages/
+logs/
+dbt_modules/
+
+# DuckDB
+*.duckdb
+*.duckdb.wal
+data/*.duckdb
+data/*.duckdb.wal
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+venv/
+ENV/
+*.egg-info/
+dist/
+build/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+
+# OS
+Thumbs.db
+
+# Logs
+*.log
+
+# Seeds (optional - kommentiere aus, wenn Seeds nicht gepusht werden sollen)
+# seeds/*.csv

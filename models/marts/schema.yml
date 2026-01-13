@@ -1,0 +1,152 @@
+version: 2
+
+models:
+  - name: fct_orders
+    description: Zentrale Fakten-Tabelle für alle Bestellungen.
+      Verbindet Orders, Payments und Customers. Enthält umfangreiche
+      Zeitdimensionen und berechnete Business-Metriken wie Recognized Revenue.
+      Diese Tabelle ist optimiert für Reporting und Analytics.
+    columns:
+      - name: order_id
+        description: Eindeutige Order-ID (Primärschlüssel)
+        tests:
+          - unique
+          - not_null
+
+      - name: customer_id
+        description: Fremdschlüssel zu dim_customers
+        tests:
+          - not_null
+
+      - name: order_date
+        description: Datum und Uhrzeit der Bestellung
+
+      - name: order_amount
+        description: Bestellbetrag
+
+      - name: order_status
+        description: Status der Bestellung
+        tests:
+          - accepted_values:
+              values: ['completed', 'pending', 'cancelled', 'refunded', 'unknown']
+
+      - name: recognized_revenue
+        description: Anerkannter Umsatz (nur für abgeschlossene Orders mit erfolgreichem Payment)
+
+      - name: payment_method
+        description: Verwendete Zahlungsmethode
+
+      - name: has_successful_payment
+        description: Boolean-Flag ob die Bestellung eine erfolgreiche Zahlung hat
+
+      - name: has_payment_discrepancy
+        description: Boolean-Flag ob Order-Betrag und Payment-Betrag nicht übereinstimmen
+
+      - name: has_multiple_payments
+        description: Boolean-Flag ob die Bestellung mehrere Payments hat
+
+      - name: order_date_month
+        description: Monat der Bestellung (für zeitliche Aggregationen)
+
+      - name: days_since_customer_signup
+        description: Anzahl Tage zwischen Customer Signup und dieser Bestellung
+
+  - name: dim_customers
+    description: Zentrale Dimensionstabelle für Kunden mit aggregierten Metriken.
+      Enthält komplexe Berechnungen wie Lifetime Value, Average Order Value,
+      Recency, Frequency und Customer Segmentierung. Diese Tabelle ist das
+      Herzstück für Customer Analytics und RFM-Analysen.
+    columns:
+      - name: customer_id
+        description: Eindeutige Kunden-ID (Primärschlüssel)
+        tests:
+          - unique
+          - not_null
+
+      - name: full_name
+        description: Vollständiger Name des Kunden
+
+      - name: country
+        description: Land des Kunden
+
+      - name: subscription_tier
+        description: Subscription-Level des Kunden
+
+      - name: signup_date
+        description: Registrierungsdatum des Kunden
+
+      - name: total_lifetime_value
+        description: Gesamter Lifetime Value (Summe aller recognized revenue)
+        tests:
+          - not_null
+
+      - name: average_order_value
+        description: Durchschnittlicher Bestellwert pro Order
+
+      - name: total_orders
+        description: Gesamtanzahl der Bestellungen
+        tests:
+          - not_null
+
+      - name: days_since_last_order
+        description: Anzahl Tage seit der letzten Bestellung (Recency-Metrik)
+
+      - name: days_to_first_order
+        description: Anzahl Tage zwischen Signup und erster Bestellung
+
+      - name: first_order_date
+        description: Datum der ersten Bestellung
+
+      - name: last_order_date
+        description: Datum der letzten Bestellung
+
+      - name: customer_segment
+        description: Segmentierung basierend auf Kauffrequenz
+        tests:
+          - accepted_values:
+              values:
+                - 'Never Purchased'
+                - 'One-Time Buyer'
+                - 'Repeat Buyer'
+                - 'Frequent Buyer'
+                - 'VIP Customer'
+
+      - name: value_segment
+        description: Segmentierung basierend auf Lifetime Value
+        tests:
+          - accepted_values:
+              values:
+                - 'No Value'
+                - 'Low Value'
+                - 'Medium Value'
+                - 'High Value'
+                - 'Very High Value'
+
+      - name: recency_segment
+        description: Segmentierung basierend auf Recency (Zeit seit letzter Bestellung)
+        tests:
+          - accepted_values:
+              values:
+                - 'Never Ordered'
+                - 'Active (Last 30 days)'
+                - 'Recent (Last 90 days)'
+                - 'At Risk (90-180 days)'
+                - 'Churned (180+ days)'
+
+      - name: avg_orders_per_month
+        description: Durchschnittliche Anzahl Bestellungen pro Monat
+
+      - name: preferred_payment_method
+        description: Bevorzugte Zahlungsmethode (am häufigsten verwendet)
+
+      - name: has_purchased
+        description: Boolean-Flag ob der Kunde jemals bestellt hat
+
+      - name: completed_orders
+        description: Anzahl abgeschlossener Bestellungen
+
+      - name: cancelled_orders
+        description: Anzahl stornierter Bestellungen
+
+      - name: refunded_orders
+        description: Anzahl erstatteter Bestellungen

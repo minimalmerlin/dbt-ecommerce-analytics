@@ -1,0 +1,60 @@
+version: 2
+
+models:
+  - name: int_customer_cohorts
+    description: Erweiterte Kunden-Kohortenanalyse mit Window Functions.
+      Gruppiert Kunden nach Signup-Monat und berechnet Metriken wie Rankings,
+      Percentiles und Durchschnittswerte innerhalb der Kohorte.
+      Demonstriert fortgeschrittene SQL-Techniken wie DATE_TRUNC, PARTITION BY,
+      FIRST_VALUE und PERCENT_RANK.
+    columns:
+      - name: customer_id
+        description: Eindeutige Kunden-ID
+        tests:
+          - unique
+          - not_null
+
+      - name: cohort_month
+        description: Monat der Kundenregistrierung (Kohorte)
+        tests:
+          - not_null
+
+      - name: cohort_quarter
+        description: Quartal der Kundenregistrierung
+
+      - name: cohort_year
+        description: Jahr der Kundenregistrierung
+
+      - name: days_to_first_order
+        description: Anzahl Tage zwischen Signup und erster Bestellung
+
+      - name: days_since_last_order
+        description: Anzahl Tage seit letzter Bestellung (Recency)
+
+      - name: customer_lifetime_days
+        description: Anzahl Tage seit Kundenregistrierung
+
+      - name: rank_in_cohort_by_value
+        description: Ranking des Kunden innerhalb seiner Kohorte nach Total Order Value
+          (verwendet ROW_NUMBER window function)
+
+      - name: percentile_rank_in_cohort
+        description: Percentile Rank des Kunden innerhalb seiner Kohorte
+          (verwendet PERCENT_RANK window function)
+
+      - name: cohort_avg_order_value
+        description: Durchschnittlicher Order Value der gesamten Kohorte
+          (verwendet AVG window function mit PARTITION BY)
+
+      - name: first_customer_in_cohort
+        description: Customer ID des ersten Kunden in der Kohorte
+          (verwendet FIRST_VALUE window function)
+
+      - name: cohort_size
+        description: Anzahl der Kunden in dieser Kohorte
+
+      - name: customer_segment
+        description: Segmentierung basierend auf Kaufverhalten
+        tests:
+          - accepted_values:
+              values: ['Never Purchased', 'One-Time Buyer', 'Repeat Buyer', 'Loyal Customer']

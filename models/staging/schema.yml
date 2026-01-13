@@ -1,0 +1,111 @@
+version: 2
+
+models:
+  - name: stg_customers
+    description: Bereinigte und standardisierte Kundendaten aus der Raw-Layer.
+      Behandelt NULL-Werte, inkonsistente Datumsformate und fehlende Namen.
+    columns:
+      - name: customer_id
+        description: Eindeutige Kunden-ID (Primärschlüssel)
+        tests:
+          - unique
+          - not_null
+
+      - name: first_name
+        description: Vorname des Kunden
+        tests:
+          - not_null
+
+      - name: last_name
+        description: Nachname des Kunden
+
+      - name: full_name
+        description: Vollständiger Name (Vorname + Nachname)
+
+      - name: signup_date
+        description: Datum der Kundenregistrierung (standardisiert auf YYYY-MM-DD)
+        tests:
+          - not_null
+
+      - name: country
+        description: Land des Kunden (bereinigt, 'Unknown' für NULL-Werte)
+
+      - name: subscription_tier
+        description: Subscription-Level des Kunden
+        tests:
+          - accepted_values:
+              values: ['Free', 'Basic', 'Premium', 'Enterprise', 'Unknown']
+
+  - name: stg_orders
+    description: Bereinigte Order-Daten. Negative Beträge werden korrigiert,
+      inkonsistente Datumsformate standardisiert und Status-Werte normalisiert.
+    columns:
+      - name: order_id
+        description: Eindeutige Order-ID (Primärschlüssel)
+        tests:
+          - unique
+          - not_null
+
+      - name: customer_id
+        description: Fremdschlüssel zu Customer
+        tests:
+          - not_null
+          - relationships:
+              to: ref('stg_customers')
+              field: customer_id
+
+      - name: order_amount
+        description: Bestellbetrag (immer positiv durch abs())
+        tests:
+          - not_null
+
+      - name: created_at
+        description: Zeitpunkt der Bestellung
+        tests:
+          - not_null
+
+      - name: order_status
+        description: Status der Bestellung
+        tests:
+          - accepted_values:
+              values: ['completed', 'pending', 'cancelled', 'refunded', 'unknown']
+
+      - name: is_completed
+        description: Boolean-Flag ob die Bestellung abgeschlossen ist
+
+  - name: stg_payments
+    description: Bereinigte Payment-Daten mit standardisierten Payment-Methods und Status.
+    columns:
+      - name: payment_id
+        description: Eindeutige Payment-ID (Primärschlüssel)
+        tests:
+          - unique
+          - not_null
+
+      - name: order_id
+        description: Fremdschlüssel zu Order
+        tests:
+          - not_null
+          - relationships:
+              to: ref('stg_orders')
+              field: order_id
+
+      - name: payment_method
+        description: Zahlungsmethode
+        tests:
+          - accepted_values:
+              values: ['credit_card', 'paypal', 'bank_transfer', 'sepa', 'invoice', 'unknown']
+
+      - name: payment_status
+        description: Status der Zahlung
+        tests:
+          - accepted_values:
+              values: ['success', 'failed', 'pending', 'refunded', 'unknown']
+
+      - name: payment_amount
+        description: Zahlungsbetrag
+        tests:
+          - not_null
+
+      - name: is_successful
+        description: Boolean-Flag ob die Zahlung erfolgreich war
