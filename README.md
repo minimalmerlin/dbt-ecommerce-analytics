@@ -1,5 +1,11 @@
 # E-Commerce Analytics dbt Portfolio Projekt
 
+![Python](https://img.shields.io/badge/python-3.8+-blue.svg)
+![dbt](https://img.shields.io/badge/dbt-1.5+-orange.svg)
+![DuckDB](https://img.shields.io/badge/DuckDB-0.9+-yellow.svg)
+![License](https://img.shields.io/badge/license-MIT-green.svg)
+![SQL](https://img.shields.io/badge/SQL-advanced-blue.svg)
+
 Ein vollständiges, lokal ausführbares dbt-Projekt, das fortgeschrittene SQL-Kompetenzen und moderne Data Engineering Best Practices demonstriert.
 
 ## 🎯 Projektziel
