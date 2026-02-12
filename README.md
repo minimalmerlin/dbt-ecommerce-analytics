@@ -297,5 +297,5 @@ Dieses Projekt ist für Portfolio- und Lernzwecke erstellt.
 ---
 
 **Erstellt mit:** dbt + DuckDB + Python
-**Autor:** Dein Name
+**Autor:** Merlin Mechler
 **Datum:** 2025
